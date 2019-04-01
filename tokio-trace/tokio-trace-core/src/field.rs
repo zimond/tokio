@@ -328,6 +328,14 @@ impl Value for str {
     }
 }
 
+impl ::sealed::Sealed for String {}
+
+impl Value for String {
+    fn record(&self, key: &Field, visitor: &mut Visit) {
+        visitor.record_str(key, self.as_ref())
+    }
+}
+
 impl<'a, T: ?Sized> ::sealed::Sealed for &'a T where T: Value + ::sealed::Sealed + 'a {}
 
 impl<'a, T: ?Sized> Value for &'a T
