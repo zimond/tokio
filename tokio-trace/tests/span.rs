@@ -63,12 +63,12 @@ fn spans_always_go_to_the_subscriber_that_tagged_them() {
 
     let foo = with_default(subscriber1, || {
         let foo = span!(Level::TRACE, "foo");
-        foo.enter(|| {});
+        foo.in_scope(|| {});
         foo
     });
     // Even though we enter subscriber 2's context, the subscriber that
     // tagged the span should see the enter/exit.
-    with_default(subscriber2, move || foo.enter(|| {}));
+    with_default(subscriber2, move || foo.in_scope(|| {}));
 }
 
 #[test]
@@ -83,7 +83,7 @@ fn spans_always_go_to_the_subscriber_that_tagged_them_even_across_threads() {
         .run();
     let foo = with_default(subscriber1, || {
         let foo = span!(Level::TRACE, "foo");
-        foo.enter(|| {});
+        foo.in_scope(|| {});
         foo
     });
 
@@ -91,7 +91,7 @@ fn spans_always_go_to_the_subscriber_that_tagged_them_even_across_threads() {
     // tagged the span should see the enter/exit.
     thread::spawn(move || {
         with_default(subscriber::mock().run(), || {
-            foo.enter(|| {});
+            foo.in_scope(|| {});
         })
     })
     .join()
@@ -108,7 +108,7 @@ fn dropping_a_span_calls_drop_span() {
         .run_with_handle();
     with_default(subscriber, || {
         let span = span!(Level::TRACE, "foo");
-        span.enter(|| {});
+        span.in_scope(|| {});
         drop(span);
     });
 
@@ -125,7 +125,7 @@ fn span_closes_after_event() {
         .done()
         .run_with_handle();
     with_default(subscriber, || {
-        span!(Level::TRACE, "foo").enter(|| {
+        span!(Level::TRACE, "foo").in_scope(|| {
             event!(Level::DEBUG, {}, "my event!");
         });
     });
@@ -146,10 +146,10 @@ fn new_span_after_event() {
         .done()
         .run_with_handle();
     with_default(subscriber, || {
-        span!(Level::TRACE, "foo").enter(|| {
+        span!(Level::TRACE, "foo").in_scope(|| {
             event!(Level::DEBUG, {}, "my event!");
         });
-        span!(Level::TRACE, "bar").enter(|| {});
+        span!(Level::TRACE, "bar").in_scope(|| {});
     });
 
     handle.assert_finished();
@@ -166,7 +166,7 @@ fn event_outside_of_span() {
         .run_with_handle();
     with_default(subscriber, || {
         debug!("my event!");
-        span!(Level::TRACE, "foo").enter(|| {});
+        span!(Level::TRACE, "foo").in_scope(|| {});
     });
 
     handle.assert_finished();
@@ -216,14 +216,14 @@ fn clone_and_drop_span_always_go_to_the_subscriber_that_tagged_the_span() {
 
     let foo = with_default(subscriber1, || {
         let foo = span!(Level::TRACE, "foo");
-        foo.enter(|| {});
+        foo.in_scope(|| {});
         foo
     });
     // Even though we enter subscriber 2's context, the subscriber that
     // tagged the span should see the enter/exit.
     with_default(subscriber2, move || {
         let foo2 = foo.clone();
-        foo.enter(|| {});
+        foo.in_scope(|| {});
         drop(foo);
         drop(foo2);
     });
@@ -242,7 +242,7 @@ fn span_closes_when_exited() {
     with_default(subscriber, || {
         let foo = span!(Level::TRACE, "foo");
 
-        foo.enter(|| {});
+        foo.in_scope(|| {});
 
         drop(foo);
     });
@@ -251,7 +251,7 @@ fn span_closes_when_exited() {
 }
 
 #[test]
-fn enter_scoped() {
+fn enter() {
     let (subscriber, handle) = subscriber::mock()
         .enter(span::mock().named("foo"))
         .event(event::mock())
@@ -261,7 +261,7 @@ fn enter_scoped() {
         .run_with_handle();
     with_default(subscriber, || {
         let foo = span!(Level::TRACE, "foo");
-        let _guard = foo.enter_scoped();
+        let _guard = foo.enter();
         debug!("dropping guard...");
     });
 
@@ -290,7 +290,7 @@ fn moved_field() {
             "foo",
             bar = display(format!("hello from {}", from))
         );
-        span.enter(|| {});
+        span.in_scope(|| {});
     });
 
     handle.assert_finished();
@@ -333,7 +333,7 @@ fn borrowed_field() {
         let from = "my span";
         let mut message = format!("hello from {}", from);
         let span = span!(Level::TRACE, "foo", bar = display(&message));
-        span.enter(|| {
+        span.in_scope(|| {
             message.insert_str(10, " inside");
         });
     });
@@ -380,8 +380,8 @@ fn move_field_out_of_struct() {
         };
         let foo = span!(Level::TRACE, "foo", x = debug(pos.x), y = debug(pos.y));
         let bar = span!(Level::TRACE, "bar", position = debug(pos));
-        foo.enter(|| {});
-        bar.enter(|| {});
+        foo.in_scope(|| {});
+        bar.in_scope(|| {});
     });
 
     handle.assert_finished();
@@ -408,7 +408,7 @@ fn add_field_after_new_span() {
     with_default(subscriber, || {
         let span = span!(Level::TRACE, "foo", bar = 5, baz);
         span.record("baz", &true);
-        span.enter(|| {})
+        span.in_scope(|| {})
     });
 
     handle.assert_finished();
@@ -436,7 +436,7 @@ fn add_fields_only_after_new_span() {
         let span = span!(Level::TRACE, "foo", bar, baz);
         span.record("bar", &5);
         span.record("baz", &true);
-        span.enter(|| {})
+        span.in_scope(|| {})
     });
 
     handle.assert_finished();
@@ -486,7 +486,7 @@ fn explicit_root_span_is_root_regardless_of_ctx() {
         .run_with_handle();
 
     with_default(subscriber, || {
-        span!(Level::TRACE, "foo").enter(|| {
+        span!(Level::TRACE, "foo").in_scope(|| {
             span!(Level::TRACE, parent: None, "bar");
         })
     });
@@ -523,7 +523,7 @@ fn explicit_child_regardless_of_ctx() {
 
     with_default(subscriber, || {
         let foo = span!(Level::TRACE, "foo");
-        span!(Level::TRACE, "bar").enter(|| span!(Level::TRACE, parent: foo.id(), "baz"))
+        span!(Level::TRACE, "bar").in_scope(|| span!(Level::TRACE, parent: foo.id(), "baz"))
     });
 
     handle.assert_finished();
@@ -558,7 +558,7 @@ fn contextual_child() {
         .run_with_handle();
 
     with_default(subscriber, || {
-        span!(Level::TRACE, "foo").enter(|| {
+        span!(Level::TRACE, "foo").in_scope(|| {
             span!(Level::TRACE, "bar");
         })
     });
