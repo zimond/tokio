@@ -16,6 +16,7 @@ pub use std::io::{Read, Write};
 #[cfg(feature = "async-await-preview")]
 #[doc(inline)]
 pub use tokio_futures::{
+    async_wait,
     io::{AsyncReadExt, AsyncWriteExt},
     sink::SinkExt,
     stream::StreamExt as StreamAsyncExt,
