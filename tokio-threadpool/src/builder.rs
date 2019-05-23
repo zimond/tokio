@@ -296,7 +296,7 @@ impl Builder {
     /// ```
     pub fn after_start<F>(&mut self, f: F) -> &mut Self
     where
-        F: Fn() + Send + Sync + 'static,
+        F: Fn() + Send + 'static,
     {
         self.config.after_start = Some(Arc::new(f));
         self
@@ -319,7 +319,7 @@ impl Builder {
     /// ```
     pub fn before_stop<F>(&mut self, f: F) -> &mut Self
     where
-        F: Fn() + Send + Sync + 'static,
+        F: Fn() + Send + 'static,
     {
         self.config.before_stop = Some(Arc::new(f));
         self

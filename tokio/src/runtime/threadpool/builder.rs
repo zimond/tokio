@@ -274,7 +274,7 @@ impl Builder {
     /// # }
     /// ```
     pub fn after_start<F>(&mut self, f: F) -> &mut Self
-        where F: Fn() + Send + Sync + 'static
+        where F: Fn() + Send + 'static
     {
         self.threadpool_builder.after_start(f);
         self

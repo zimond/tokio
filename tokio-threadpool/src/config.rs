@@ -12,8 +12,8 @@ pub(crate) struct Config {
     pub name_prefix: Option<String>,
     pub stack_size: Option<usize>,
     pub around_worker: Option<Callback>,
-    pub after_start: Option<Arc<dyn Fn() + Send + Sync>>,
-    pub before_stop: Option<Arc<dyn Fn() + Send + Sync>>,
+    pub after_start: Option<Arc<dyn Fn() + Send>>,
+    pub before_stop: Option<Arc<dyn Fn() + Send>>,
     pub panic_handler: Option<Arc<dyn Fn(Box<dyn Any + Send>) + Send + Sync>>,
 }
 
