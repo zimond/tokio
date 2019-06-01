@@ -8,7 +8,7 @@ name = "tokio-io"
 #   - README.md
 # - Update CHANGELOG.md.
 # - Create "v0.1.x" git tag.
-version = "0.2.0"
+version = "0.1.22"
 edition = "2018"
 authors = ["Carl Lerche <me@carllerche.com>"]
 license = "MIT"
@@ -27,4 +27,4 @@ futures = "0.1.18"
 log = "0.4"
 
 [dev-dependencies]
-tokio-current-thread = { version = "0.2.0", path = "../tokio-current-thread" }
+tokio-current-thread = { version = "0.1.22", path = "../tokio-current-thread" }

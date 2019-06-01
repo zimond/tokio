@@ -298,7 +298,7 @@ impl Builder {
     /// # }
     /// ```
     pub fn before_stop<F>(&mut self, f: F) -> &mut Self
-        where F: Fn() + Send + Sync + 'static
+        where F: Fn() + Send + 'static
     {
         self.threadpool_builder.before_stop(f);
         self

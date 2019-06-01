@@ -23,7 +23,7 @@ publish = false
 
 [dependencies]
 futures = "0.1.19"
-tokio-executor = { version = "0.2.0", path = "../tokio-executor" }
+tokio-executor = { version = "0.1.22", path = "../tokio-executor" }
 crossbeam-utils = "0.6.0"
 
 # Backs `DelayQueue`
@@ -32,4 +32,4 @@ slab = "0.4.1"
 [dev-dependencies]
 rand = "0.6"
 tokio-mock-task = "0.1.0"
-tokio = { version = "0.2.0", path = "../tokio" }
+tokio = { version = "0.1.22", path = "../tokio" }

@@ -25,7 +25,7 @@ name = "hyper"
 path = "src/hyper.rs"
 
 [dependencies]
-tokio = { version = "0.2.0", features = ["async-await-preview"], path = "../tokio" }
+tokio = { version = "0.1.22", features = ["async-await-preview"], path = "../tokio" }
 futures = "0.1.23"
 bytes = "0.4.9"
 hyper = "0.12.8"

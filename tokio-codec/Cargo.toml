@@ -8,7 +8,7 @@ name = "tokio-codec"
 #   - README.md
 # - Update CHANGELOG.md.
 # - Create "v0.2.x" git tag.
-version = "0.2.0"
+version = "0.1.22"
 edition = "2018"
 authors = ["Carl Lerche <me@carllerche.com>", "Bryan Burgers <bryan@burgers.io>"]
 license = "MIT"
@@ -22,6 +22,6 @@ categories = ["asynchronous"]
 publish = false
 
 [dependencies]
-tokio-io = { version = "0.2.0", path = "../tokio-io" }
+tokio-io = { version = "0.1.22", path = "../tokio-io" }
 bytes = "0.4.7"
 futures = "0.1.18"
