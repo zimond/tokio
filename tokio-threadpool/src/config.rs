@@ -13,7 +13,7 @@ pub(crate) struct Config {
     pub name_prefix: Option<String>,
     pub stack_size: Option<usize>,
     pub around_worker: Option<Callback>,
-    pub after_start: Option<Arc<Fn() + Send + Sync>>,
+    pub after_start: Option<Arc<Fn() + Send>>,
     pub before_stop: Option<Arc<Fn() + Send + Sync>>,
     pub panic_handler: Option<Arc<Fn(Box<Any + Send>) + Send + Sync>>,
 }
